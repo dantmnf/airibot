@@ -28,6 +28,9 @@ module Airi
 ~
 
       router.register 'rollbed' do |client, cmdline, call_from, caller|
+
+        #FIXME: async db query
+
         argv = cmdline.split(' ')
 
         dbfile = "#{File.dirname(__FILE__)}/rollbed.db"
@@ -149,7 +152,7 @@ module Airi
       end
 
       router.register ['ruby', 'eval', 'rb'] do |client, cmdline, call_from, caller|
-        #client.message call_from, "#{caller.nick}: ALPHA!"
+        #TODO: a more safe way
 
         cmdline = cmdline.split(' ', 2).last
         timer = nil

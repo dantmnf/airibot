@@ -57,6 +57,7 @@ module Airi
     end
 
     def post_init
+      #TODO: SASL
       pass Airi::Config::PASS
       nick Airi::Config::NICK
       user Airi::Config::USER, 0, Airi::Config::REAL_NAME
@@ -131,7 +132,7 @@ EM.run {
   trap('TERM') { EM.stop }
 
   q = EM::Queue.new
-
+  #FIXME: SSL connection
   EM.connect('chat.freenode.net', 6667, Airi::IRCClient, q)
   EM.open_keyboard(KeyboardHandler, q)
 }
