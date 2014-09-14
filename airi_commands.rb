@@ -143,7 +143,7 @@ module Airi
       end
 
       router.register_command_not_found do |client, cmdline, call_from, caller|
-        client.message call_from, "#{caller.nick}: <-- 警察叔叔，就是这个人！"
+        client.message call_from, "\1ACTION #{caller.nick} <-- 警察叔叔，就是这个人！\1"
       end
 
 
@@ -165,7 +165,11 @@ module Airi
             if msg.strip != ''
               client.message call_from, "#{caller.nick}: #{msg}"
             else
-              client.message call_from, "#{caller.nick}: #{last_return}"
+              if last_return.strip != ''
+                client.message call_from, "#{caller.nick}: #{last_return}"
+              else
+                client.message call_from, "#{caller.nick}: => no stdout (maybe fatal error)"
+              end
             end
           end
           if status.exitstatus == 1

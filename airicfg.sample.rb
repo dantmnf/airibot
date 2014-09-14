@@ -1,10 +1,16 @@
- module Airi
+module Airi
   module Config
-    PASS = 'connectionpassword'
-    USER = 'Airi__'
-    NICK = 'Airi____'
-    REAL_NAME = 'Airi Akitsuki'
-    JOIN_CHANNELS = ['##Airi-test']
+    SERVER  = 'chat.freenode.net'
+    PORT    = 6697
+    SSL     = true
+    PASS    = 'connectionpassword'
+    USER    = 'Airi'
+    NICK    = 'Airiageawfasfasfeg'
+    REAL_NAME = '秋月爱莉'
+    JOIN_CHANNELS = ['#linuxba']
     INITIAL_COMMANDS = []
+    SASL = true
+    SASL_USERNAME = 'Airiasfahwehs'
+    SASL_PASSWORD = 'Wgaga5gae0'
   end
 end
