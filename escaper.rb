@@ -8,8 +8,8 @@ Process.setrlimit(:NPROC, 1, 1)
 Process.setrlimit(:CPU, 2, 2)
 Process.setrlimit(:RTTIME, 200000, 200000)
 [:fork,:exec,:load,:require,:require_relative,:spawn,:syscall,:system,:`,:sleep,:open].each {|symb| Kernel.send(:remove_method, symb)}
-#[:popen,:open,:sysopen,:sysread].each {|symb| IO.send(:remove_method, symb)}
 [:Process,:Thread].each {|symb| Object.send(:remove_const, symb)}
+#FIXME: other dangerous methods
 begin
   
 result = eval($*.join(' '), nil, '$*', 1)
