@@ -119,7 +119,10 @@ module Airi
         when '903'
           irc_init2
         end
-      rescue Exception, NameError, NoMethodError
+      rescue Exception, StandardError
+        STDERR.print("An error occurred while parsing #{line}\n")
+        STDERR.print("#$!\n at #{$@.join "\n"}\n")
+      rescue
         STDERR.print("An error occurred while parsing #{line}\n")
         STDERR.print("#$!\n at #{$@.join "\n"}\n")
       end

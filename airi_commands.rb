@@ -4,14 +4,14 @@ module Airi
     def setup(router)
 
 
-%s~
+      %s~
       router.register 'cal' do |client, cmdline, call_from, caller|
         client.message call_from, "#{caller.nick}: #{Time.now.to_s}"
         client.message call_from, "#{caller.nick}: TODO: recent festivals"
       end
-~
+      ~
 
-%s~
+      %s~
       router.register 'sleep' do |client, cmdline, call_from, caller|
         hentai_argv = cmdline.split(' ', 3)
         hentai_argv.shift
@@ -25,7 +25,7 @@ module Airi
           client.message call_from, "#{caller.nick}: usage: sleep <time in second> [wakeup client.message]"
         end
       end
-~
+      ~
 
       router.register 'rollbed' do |client, cmdline, call_from, caller|
 
@@ -50,7 +50,7 @@ module Airi
 
         # query stat
         if argv[1] == 'stat'
-          
+
           #client.message call_from, "#{caller.nick}: TODO: rollbed stats."
 
 
@@ -103,7 +103,7 @@ module Airi
           rollbed_time = (rand() * 10).round(2)
           #EM.defer do
           count, longest, shortest = db.execute("SELECT COUNT,LONGEST,SHORTEST FROM ROLLBED WHERE NICK == '#{caller.nick}' LIMIT 1;").flatten
-          
+
           global_longest = db.execute("SELECT LONGEST FROM ROLLBED ORDER BY LONGEST DESC LIMIT 1;")[0][0]
           global_shortest = db.execute("SELECT LONGEST FROM ROLLBED ORDER BY SHORTEST ASC LIMIT 1;")[0][0]
 
@@ -128,7 +128,7 @@ module Airi
             shortest = rollbed_time
             msg = '创造了自己的秒【哔】记录。'
             if rollbed_time < global_shortest
-              msg = '创造了全局秒【哔】记录。'
+              msg = '创造了自己的秒【哔】记录。'
             end
           else
             msg = '建议向游泳教练请教【哔——】的方法。'
@@ -235,21 +235,29 @@ module Airi
       require 'em-http'
       require 'json'
       router.register 'smol' do |client, cmdline, call_from, caller|
-        smlist = cmdline.split(' ', 2)
-        smlist.shift
-        http = EventMachine::HttpRequest.new('http://xiaofengrobot.sinaapp.com/web.php').get :query => {'para' => smlist.first}
-
-        http.errback { client.message call_from, "#{caller.nick}: uh~oh~" }
-        http.callback {
-          if http.response_header.status == 200
-            response = http.response[5..-2]
-            response.gsub! /<br ?(\/)? ?>/, ''
-            j = JSON.parse %Q~
-            {message: #{response}};
-            ~
-            client.message call_from, "#{caller.nick}: #{j['message']}"
+        begin
+          smlist = cmdline.split(' ', 2)
+          smlist.shift
+          if smlist.empty?
+            client.message call_from, "#{caller.nick}: Pia!<(=ｏ ‵-′)ノ"
+            return
           end
-        }
+          http = EventMachine::HttpRequest.new('http://xiaofengrobot.sinaapp.com/web.php').get :query => {'para' => smlist.first}
+
+          http.errback { client.message call_from, "#{caller.nick}: uh~oh~" }
+          http.callback {
+            if http.response_header.status == 200
+              response = http.response[5..-2]
+              response.gsub! /<br ?(\/)? ?>/, ' '
+              j = JSON.parse %Q~{"message": #{response}}~
+              
+              client.message call_from, "#{caller.nick}: #{j['message']}"
+            end
+          }
+        rescue JSON::ParserError
+          STDERR.print("An error occurred while parsing JSON\n")
+          STDERR.print("#$!\n at #{$@.join "\n"}\n")
+        end
       end
 
     end
