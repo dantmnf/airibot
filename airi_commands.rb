@@ -197,17 +197,20 @@ module Airi
       end
 
       require_relative 'tagman'
-      $tagmanager = Airi::TagManager.new
-      $tagmanager.loadtag "#{File.dirname(__FILE__)}/tags.marshal"
-      at_exit { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
+      unless $tagmanager
+        $tagmanager = Airi::TagManager.new
+        $tagmanager.loadtag "#{File.dirname(__FILE__)}/tags.marshal"
+        at_exit { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
+      end
       EM::PeriodicTimer.new(300) { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
+
       router.register ['sm', 'sm+'] do |client, cmdline, call_from, caller|
         #STDERR.puts cmdline
         smlist = cmdline.split(' ', 3)
         cmd = smlist.shift
         if smlist.empty?
           client.message call_from, "#{caller.nick}: usage: sm name [+tag]"
-          return
+          next
         end
         #p smlist
         name = smlist.shift
@@ -240,7 +243,7 @@ module Airi
           smlist.shift
           if smlist.empty?
             client.message call_from, "#{caller.nick}: Pia!<(=ｏ ‵-′)ノ"
-            return
+            next
           end
           http = EventMachine::HttpRequest.new('http://xiaofengrobot.sinaapp.com/web.php').get :query => {'para' => smlist.first}
 

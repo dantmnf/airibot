@@ -46,11 +46,23 @@ module Airi
       @queue = q
 
       cb = Proc.new do |msg|
-        send_line msg
+        console_command msg
         q.pop &cb
       end
 
       q.pop &cb
+    end
+
+    def console_command(cmd)
+      if cmd[0] == '~'
+        begin
+          eval cmd[1..-1]
+        rescue
+          p $!
+        end
+      else
+        send_line cmd
+      end
     end
 
     def connection_completed
@@ -148,6 +160,12 @@ module Airi
     def unbind
       EM.stop
     end
+
+    def reload_commands
+      load("#{File.dirname(__FILE__)}/airi_commands.rb")
+      setup_router
+    end
+
   end
 end
 
