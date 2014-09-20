@@ -175,7 +175,7 @@ module Airi
           if status.exitstatus == 1
             timer.cancel
             lines = output.split("\n")
-            client.message call_from, "#{caller.nick}: #{lines.last}"
+            client.message call_from, "#{caller.nick}: #{lines.last[0...140]}"
           end
         end
 
@@ -188,6 +188,48 @@ module Airi
         end
       end
 
+      router.register 'pia' do |client, cmdline, call_from, caller|
+        pialist = cmdline.split(' ')
+        pialist.shift
+        pialist.each do |name|
+          client.message call_from, "Pia!<(=ｏ ‵-′)ノ☆#{name}"
+        end
+      end
+
+      require_relative 'tagman'
+      $tagmanager = Airi::TagManager.new
+      $tagmanager.loadtag "#{File.dirname(__FILE__)}/tags.marshal"
+      at_exit { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
+      EM::PeriodicTimer.new(300) { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
+      router.register ['sm', 'sm+'] do |client, cmdline, call_from, caller|
+        STDERR.puts cmdline
+        smlist = cmdline.split(' ', 3)
+        cmd = smlist.shift
+        if smlist.empty?
+          client.message call_from, "#{caller.nick}: usage: sm name [+tag]"
+        end
+        p smlist
+        name = smlist.shift
+
+        if smlist.empty?
+          #get tag
+          tag, index, total = $tagmanager.gettag name
+          case cmd
+          when 'sm'
+            msg = "#{caller.nick}: #{tag}"
+          when 'sm+'
+            msg = "#{caller.nick}: (#{index}/#{total}) #{tag}"
+          end
+          client.message call_from, msg
+        else
+          tag = smlist.last[1..-1]
+          if $tagmanager.addtag(name, tag) == true
+            client.message call_from, "#{caller.nick}: tag added"
+          else
+            client.message call_from, "#{caller.nick}: tag exists"
+          end
+        end
+      end
 
     end
   end

@@ -7,7 +7,7 @@ module Airi
       @user_lastflag = {}
     end
 
-    def check(nick, user)
+    def check(client, nick, user)
       check_nick(nick) && check_user(user)
     end
 
