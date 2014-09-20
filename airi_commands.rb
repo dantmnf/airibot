@@ -148,7 +148,7 @@ module Airi
 
 
       router.register 'help' do |client, cmdline, call_from, caller|
-        client.message call_from, "#{caller.nick}: commands: <STUB>cal, rollbed [stat [.global | <name>]], (ruby|rb|eval) <script>"
+        client.message call_from, "#{caller.nick}: commands: rollbed [stat [.global | <name>]], (ruby|rb|eval) <script>, pia [hentai1 [hentai2]], sm"
       end
 
       router.register ['ruby', 'eval', 'rb'] do |client, cmdline, call_from, caller|
@@ -202,13 +202,14 @@ module Airi
       at_exit { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
       EM::PeriodicTimer.new(300) { $tagmanager.savetag "#{File.dirname(__FILE__)}/tags.marshal" }
       router.register ['sm', 'sm+'] do |client, cmdline, call_from, caller|
-        STDERR.puts cmdline
+        #STDERR.puts cmdline
         smlist = cmdline.split(' ', 3)
         cmd = smlist.shift
         if smlist.empty?
           client.message call_from, "#{caller.nick}: usage: sm name [+tag]"
+          return
         end
-        p smlist
+        #p smlist
         name = smlist.shift
 
         if smlist.empty?
@@ -221,7 +222,7 @@ module Airi
             msg = "#{caller.nick}: (#{index}/#{total}) #{tag}"
           end
           client.message call_from, msg
-        else
+        elsif smlist.first[0] == '+'
           tag = smlist.last[1..-1]
           if $tagmanager.addtag(name, tag) == true
             client.message call_from, "#{caller.nick}: tag added"
@@ -229,6 +230,26 @@ module Airi
             client.message call_from, "#{caller.nick}: tag exists"
           end
         end
+      end
+
+      require 'em-http'
+      require 'json'
+      router.register 'smol' do |client, cmdline, call_from, caller|
+        smlist = cmdline.split(' ', 2)
+        smlist.shift
+        http = EventMachine::HttpRequest.new('http://xiaofengrobot.sinaapp.com/web.php').get :query => {'para' => smlist.first}
+
+        http.errback { client.message call_from, "#{caller.nick}: uh~oh~" }
+        http.callback {
+          if http.response_header.status == 200
+            response = http.response[5..-2]
+            response.gsub! /<br ?(\/)? ?>/, ''
+            j = JSON.parse %Q~
+            {message: #{response}};
+            ~
+            client.message call_from, "#{caller.nick}: #{j['message']}"
+          end
+        }
       end
 
     end

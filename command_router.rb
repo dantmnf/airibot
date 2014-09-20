@@ -23,7 +23,7 @@
     end
 
     def route(cmdline, call_from, caller)
-      STDERR.puts("route(#{cmdline.inspect}, #{call_from.inspect}, #{caller.inspect})")
+      #STDERR.puts("route(#{cmdline.inspect}, #{call_from.inspect}, #{caller.inspect})")
       cmdline.lstrip!
       command = cmdline.split(' ', 2).first
       parser = @command_hash.fetch(command, @command_not_found)

@@ -119,7 +119,7 @@ module Airi
         when '903'
           irc_init2
         end
-      rescue Exception
+      rescue Exception, NameError, NoMethodError
         STDERR.print("An error occurred while parsing #{line}\n")
         STDERR.print("#$!\n at #{$@.join "\n"}\n")
       end
@@ -129,12 +129,11 @@ module Airi
     def parse_msg(msg_from, msg_to, msg_content)
       # msg_from: :Nickname!username@hostname
       hentai_info = /^(.*)!(.*)@(.*)$/.match msg_from
-      if msg_match_result = /^([Aa]iri[,: ]|:)(.*)$/.match(msg_content)
+      if msg_match_result = /^([Aa]iri[,: ]|~)(.*)$/.match(msg_content)
         caller = CallerInfo.new(hentai_info[1], hentai_info[2], hentai_info[3])
-        if @gfw.check(self, caller.nick, caller.user)
+        return if caller.nick == nick
+        if @gfw.log(self, msg_to, caller.nick, caller.user)
           parse_cmd(msg_to, caller, msg_match_result[2].strip)
-        else
-          #TODO: anti-flooding message
         end
       end
     end

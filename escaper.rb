@@ -18,7 +18,7 @@ end
 begin
   
 result = eval($*.join(' '), nil, '$*', 1)
-rescue Exception
+rescue Exception, SyntaxError
   puts("error: " << $!.message)
   exit 1
 end
