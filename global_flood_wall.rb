@@ -28,7 +28,7 @@ module Airi
         @nick_log[nick] = [now]
       else
         @nick_log[nick].push now
-        if @nick_log[nick].length > 8
+        if @nick_log[nick].length > 6
           time1 = @nick_log[nick].shift
           #p time1,time2
           if now - time1 < 30
@@ -57,7 +57,7 @@ module Airi
         @user_log[user] = [now]
       else
         @user_log[user].push now
-        if @user_log[user].length > 8
+        if @user_log[user].length > 6
           time1 = @user_log[user].shift
           #p time1,time2
           if now - time1 < 30
