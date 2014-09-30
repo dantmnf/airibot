@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
+
 require 'base64'
+require 'fiber'
 require 'rubygems'
 require 'bundler/setup'
 
@@ -43,6 +45,7 @@ module Airi
     #end
 
     def initialize(q)
+      @callback_hash = {}
       @queue = q
 
       cb = Proc.new do |msg|
@@ -85,13 +88,51 @@ module Airi
     def irc_init
 
       setup_router
+      setup_internal_callbacks
+      
       @gfw = Airi::GFW.new
       pass Airi::Config::PASS
       # SASL
       if Airi::Config::SASL
-        send_line 'CAP REQ :sasl'
+        Fiber.new do
+          f = Fiber.current
+          send_line 'CAP REQ :sasl'
+
+          cb = add_command_callback 'CAP' do |client, msg|
+            if msg[2][1] == 'ACK'
+              remove_command_callback cb
+              f.resume msg
+            end
+          end
+
+          msg = Fiber.yield
+
+          unless msg[2][2].split(' ').include?('sasl')
+            STDERR.puts 'server does not support SASL.'
+            next
+          end
+
+          send_line 'AUTHENTICATE PLAIN'
+
+          cb = add_command_callback 'AUTHENTICATE' do |client, msg|
+            remove_command_callback cb
+            f.resume msg
+          end
+          msg = Fiber.yield
+
+          if msg[2][0] == '+'
+            sasl_data = Base64.encode64("#{Airi::Config::NICK}\0#{Airi::Config::SASL_USERNAME}\0#{Airi::Config::SASL_PASSWORD}").strip
+            send_line "AUTHENTICATE #{sasl_data}"
+            send_line 'CAP END'
+          else
+            STDERR.puts 'server does not support SASL.'
+            next
+          end
+          irc_init2
+        end.resume
+
+
       else
-        
         irc_init2
       end
       
@@ -109,31 +150,44 @@ module Airi
       parse_line line
     end
 
+    def add_command_callback(msg, &cb)
+      if msg.is_a? Array
+        msg.each {|item| add_command_callback(msg, &cb) }
+      elsif msg.is_a? String
+        msg = msg.upcase
+        if @callback_hash[msg].nil?
+          @callback_hash[msg] = [cb]
+        else
+          @callback_hash[msg].push cb
+        end
+      end
+      return cb
+    end
+
+    def remove_command_callback(cb)
+      @callback_hash.each do |msg, arr|
+        arr.delete cb
+      end
+    end
+
+    def setup_internal_callbacks
+      add_command_callback 'PRIVMSG' do |client, msg|
+        parse_msg msg[0], msg[2].first, msg[2][1]
+      end
+
+      add_command_callback 'PING' do |client, msg|
+        pong msg[2].first
+      end
+    end
+
     def parse_line(line)
 
       begin
         msg = IRCParser.parse_raw line+"\r\n"
-        case msg[1]
-        when 'PRIVMSG'
-          parse_msg msg[0], msg[2].first, msg[2][1]
-        when 'PING'
-          pong msg[2].first
-        when 'CAP'
-          if msg[2][2].split(' ').include?('sasl')
-            send_line 'AUTHENTICATE PLAIN'
-          end
-        when 'AUTHENTICATE'
-          if msg[2][0] == '+'
-            sasl_data = Base64.encode64("#{Airi::Config::NICK}\0#{Airi::Config::SASL_USERNAME}\0#{Airi::Config::SASL_PASSWORD}").strip
-            send_line "AUTHENTICATE #{sasl_data}"
-            send_line 'CAP END'
-          end
-        when '903'
-          irc_init2
-        end
-      rescue Exception, StandardError
-        STDERR.print("An error occurred while parsing #{line}\n")
-        STDERR.print("#$!\n at #{$@.join "\n"}\n")
+
+        callbacks = @callback_hash.fetch(msg[1], [])
+        callbacks.each {|cb| cb.call(self, msg) }
+
       rescue
         STDERR.print("An error occurred while parsing #{line}\n")
         STDERR.print("#$!\n at #{$@.join "\n"}\n")
