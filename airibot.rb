@@ -210,7 +210,7 @@ module Airi
           parse_cmd(msg_to, caller, msg_match_result[2].strip)
         end
       elsif msg_content.upcase == "\1VERSION\1"
-        message caller.nick, "\1VERSION Airi bot by dantmnf\1"
+        notice caller.nick, "\1VERSION Airi bot by dantmnf\1"
       end
         
     end
