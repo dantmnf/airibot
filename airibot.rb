@@ -202,14 +202,17 @@ module Airi
 
     def parse_msg(msg_from, msg_to, msg_content)
       # msg_from: :Nickname!username@hostname
-      hentai_info = /^(.*)!(.*)@(.*)$/.match msg_from
+      callermatch_info = /^(.*)!(.*)@(.*)$/.match msg_from
+      caller = CallerInfo.new(callermatch_info[1], callermatch_info[2], callermatch_info[3])
       if msg_match_result = /^([Aa]iri[,: ]|~)(.*)$/.match(msg_content)
-        caller = CallerInfo.new(hentai_info[1], hentai_info[2], hentai_info[3])
         return if caller.nick == nick
         if @gfw.log(self, msg_to, caller.nick, caller.user)
           parse_cmd(msg_to, caller, msg_match_result[2].strip)
         end
+      elsif msg_content.upcase == "\1VERSION\1"
+        message caller.nick, "\1VERSION Airi bot by dantmnf\1"
       end
+        
     end
 
     def parse_cmd(msg_to, hentai_info, hentai_cmdline)
