@@ -128,6 +128,11 @@ module Airi
             STDERR.puts 'server does not support SASL.'
             next
           end
+
+          cb = add_command_callback '903' do |client, msg|
+            f.resume
+          end
+          Fiber.yield
           irc_init2
         end.resume
 
@@ -242,8 +247,7 @@ EM.run {
   trap('INT') { EM.stop }
   trap('TERM') { EM.stop }
 
-  q = EM::Queue.new
-  #FIXME: SSL connection
-  EM.connect(Airi::Config::SERVER, Airi::Config::PORT, Airi::IRCClient, q)
-  EM.open_keyboard(KeyboardHandler, q)
+  $keyboard_queue = EM::Queue.new
+  EM.connect(Airi::Config::SERVER, Airi::Config::PORT, Airi::IRCClient, $keyboard_queue)
+  EM.open_keyboard(KeyboardHandler, $keyboard_queue)
 }
