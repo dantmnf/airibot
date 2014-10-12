@@ -53,14 +53,17 @@ class WebTitle
       msg = "⇪错误：#{response.status}"
     end
     return msg
-  rescue Curl::Err => e
-    "⇪错误：#{e.message}"
+  rescue Curl::Err::TimeoutError
+    "⇪错误：超时"
+  rescue
+    nil
   end
 
   def execute(m)
     return unless @@enabled
     url = URI.regexp.match(m.message).to_s
-    m.reply(get_url_info(url))
+    s = get_url_info(url)
+    m.reply(s) unless s.strip.empty?
   end
 
   def titlecfg(m, query)
