@@ -28,6 +28,13 @@ bot = Cinch::Bot.new do
     c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb]
   end
   #loggers.level = :log
+
+  on :ctcp do |m|
+    if m.ctcp_message.upcase == 'VERSION'
+      m.ctcp_reply 'VERSION Airi_new by dantmnf'
+    end
+  end
+
 end
 
 Thread.new do
