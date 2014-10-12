@@ -12,14 +12,16 @@ class WebTitle
   match /titlecfg (on|off)/, method: :titlecfg
   @@enabled = true
 
-  def get_url_info(url, redirected = false)
-
+  def get_url_info(url, redirected = 0)
+    if redirected > 10
+      "⇪错误：重定向次数过多"
+    end
     response = Curl::Easy.new url
     response.timeout = 5
     response.http_head
     case response.response_code
     when 301, 302
-      return get_url_info(response.redirect_url, true)
+      return get_url_info(response.redirect_url, redirect + 1)
     when 200
 
       if response.content_type.include? 'html'
