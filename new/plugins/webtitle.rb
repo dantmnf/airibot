@@ -62,6 +62,7 @@ class WebTitle
   def execute(m)
     return unless @@enabled
     url = URI.regexp.match(m.message).to_s
+    return unless url[0,4] == 'http'
     s = get_url_info(url)
     m.reply(s) unless s.strip.empty?
   end
