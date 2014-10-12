@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'bundler/setup'
 require 'cinch'
 require 'cgi'
 require 'open-uri'

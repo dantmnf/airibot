@@ -1,0 +1,6 @@
+source 'https://ruby.taobao.org'
+
+gem 'cinch'
+gem 'sqlite3'
+gem 'curb'
+gem 'nokogiri'
