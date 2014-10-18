@@ -16,6 +16,7 @@ bot = Cinch::Bot.new do
     begin
       eval File.read(CFGFILE) # example contents in this file is in rescue...end below
     rescue
+p $!
       c.nick = 'Airi_new'
       c.user = 'Airi'
       c.realname = '新しいアイリ'

@@ -8,7 +8,7 @@ require 'nokogiri'
 class WebTitle
   include Cinch::Plugin
 
-  match URI.regexp, use_prefix: false
+  match /([Hh][Tt][Tt][Pp][Ss]?:\/\/[^\s]+)/, use_prefix: false
   match /titlecfg (on|off)/, method: :titlecfg
   @@enabled = true
 
@@ -21,7 +21,7 @@ class WebTitle
     response.http_head
     case response.response_code
     when 301, 302
-      return get_url_info(response.redirect_url, redirect + 1)
+      return get_url_info(response.redirect_url, redirected + 1)
     when 200
 
       if response.content_type.include? 'html'
@@ -34,8 +34,9 @@ class WebTitle
         rescue
           '<no title>'
         end
+        title.gsub! /(\r|\n)/, ''
         msg = "⇪标题：#{title}"
-        msg << " (重定向到 #{url} )" if redirected
+        msg << " (重定向到 #{url} )" if redirected != 0
       else
         msg = "⇪MIME: #{response.content_type}"
         mr = nil
@@ -49,6 +50,7 @@ class WebTitle
         if mr
           msg << " 长度：#{mr[1]}"
         end
+        msg << " (重定向到 #{url} )" if redirected != 0
       end
 
     else
@@ -58,14 +60,13 @@ class WebTitle
     return msg
   rescue Curl::Err::TimeoutError
     "⇪错误：超时"
-  rescue
-    nil
+#  rescue
+    "⇪错误：" << $!.message
   end
 
-  def execute(m)
+  def execute(m, query)
     return unless @@enabled
-    url = URI.regexp.match(m.message).to_s
-    return unless url[0,4] == 'http'
+    url = query
     s = get_url_info(url)
     m.reply(s) unless s.strip.empty?
   end
