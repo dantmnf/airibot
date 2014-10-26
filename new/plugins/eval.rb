@@ -16,10 +16,10 @@ class EvalRb
     sin.close
     error = ''
     t = Timer(5) do
-      debug 'timer fire'
+      #debug 'timer fire'
 
-      Process.kill(9, pid)
-      debug 'killed'
+      Process.kill(9, pid) rescue nil
+      #debug 'killed'
       error = 'error: killed by watchdog'
       m.reply error, true
       t.stop
