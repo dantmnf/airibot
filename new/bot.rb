@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'cinch'
 
 require_relative 'lib/console'
+require_relative 'lib/antiflood'
 require_relative 'plugins/sm'
 require_relative 'plugins/pia'
 require_relative 'plugins/rollbed'
@@ -11,6 +12,7 @@ require_relative 'plugins/eval.rb'
 
 CFGFILE = 'config.rb'
 
+$antiflood = AntiFlood.new
 bot = Cinch::Bot.new do
   configure do |c|
     begin
