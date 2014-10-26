@@ -25,7 +25,7 @@ class AntiFlood
     @data[target][user].shift while @data[target][user].length > LOG_SIZE
   end
 
-  def check(msg)
+  def flooding?(msg)
     return false if banned? msg
     target = msg.target.name
     nick = 'nick=' + msg.user.nick
@@ -50,7 +50,7 @@ class AntiFlood
     @banlist[target][nick] = Time.now + BAN_TIME
     @banlist[target][user] = Time.now + BAN_TIME
 
-    msg.reply('Pia!<(=ｏ ‵-′)ノ☆', true) if prompt
+    msg.reply('Pia!<(=ｏ ‵-′)ノ☆' + msg.user.nick) if prompt
     
   end
 
@@ -59,8 +59,8 @@ class AntiFlood
     nick = 'nick=' + msg.user.nick
     user = 'user=' + msg.user.user
     
-    result = (@banlist[target][nick].is_a? Time && @banlist[target][nick] > Time.now)
-    result ||= (@banlist[target][user].is_a? Time && @banlist[target][user] > Time.now)
+    result = (@banlist[target][nick].is_a?(Time) && @banlist[target][nick] > Time.now)
+    result ||= (@banlist[target][user].is_a?(Time) && @banlist[target][user] > Time.now)
     
     return result
   rescue
@@ -70,9 +70,9 @@ class AntiFlood
   def log_check_and_ban(msg, prompt=true)
     return false if banned? msg
     log msg
-    checkresult = check msg
+    checkresult = flooding? msg
     ban(msg, prompt) if checkresult == true
-    return checkresult
+    return !checkresult
   end
 end
 

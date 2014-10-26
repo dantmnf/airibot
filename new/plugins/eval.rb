@@ -9,7 +9,7 @@ class EvalRb
   match /(?:eval|ruby|rb) (.+)/
   
   def execute(m, query)
-    return if $antiflood.log_check_and_ban m
+    return unless $antiflood.log_check_and_ban m
     sin, sout, serr, thr = Open3.popen3("ruby #{File.dirname(__FILE__)}/../assets/escaper.rb")
     pid = thr[:pid]
     sin.puts query

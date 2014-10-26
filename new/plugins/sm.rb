@@ -21,7 +21,7 @@ class SM
   
   
   def execute(m, query)
-    return if $antiflood.log_check_and_ban m
+    return unless $antiflood.log_check_and_ban m
     m.reply(get_sm_message(query), true)
   end
 end

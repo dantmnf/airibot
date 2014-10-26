@@ -25,7 +25,7 @@ class Rollbed
   match /rollbed(?: (.*))?/
   
   def execute(m, query)
-    return if $antiflood.log_check_and_ban m
+    return unless $antiflood.log_check_and_ban m
     query = '' if query.nil?
     argv = query.split ' '
     p argv
