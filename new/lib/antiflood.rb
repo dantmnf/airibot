@@ -63,6 +63,8 @@ class AntiFlood
     result ||= (@banlist[target][user].is_a? Time && @banlist[target][user] > Time.now)
     
     return result
+  rescue
+    false
   end
   
   def log_check_and_ban(msg, prompt=true)
