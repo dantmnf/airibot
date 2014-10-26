@@ -50,7 +50,7 @@ class AntiFlood
     @banlist[target][nick] = Time.now + BAN_TIME
     @banlist[target][user] = Time.now + BAN_TIME
 
-    m.reply('Pia!<(=ｏ ‵-′)ノ☆', true) if prompt
+    msg.reply('Pia!<(=ｏ ‵-′)ノ☆', true) if prompt
     
   end
 
