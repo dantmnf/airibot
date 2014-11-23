@@ -10,7 +10,7 @@ class WebTitle
 
   match /([Hh][Tt][Tt][Pp][Ss]?:\/\/[^\s]+)/, use_prefix: false
   match /titlecfg (on|off)/, method: :titlecfg
-  @@enabled = true
+  @@enabled = false
 
   def get_url_info(url, redirected = 0)
     if redirected > 10
@@ -18,17 +18,16 @@ class WebTitle
     end
     response = Curl::Easy.new url
     response.timeout = 5
-    response.http_head
+    response.useragent = 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0'
+    response.headers = {'Range' => '0-16384'}
+    response.http_get
     case response.response_code
     when 301, 302
       return get_url_info(response.redirect_url, redirected + 1)
-    when 200
+    when 200, 206
 
       if response.content_type.include? 'html'
-        htmlreq = Curl::Easy.new url
-        htmlreq.timeout = 10
-        htmlreq.http_get
-        nkgr = Nokogiri.parse htmlreq.body
+        nkgr = Nokogiri.parse response.body
         title = begin
           nkgr.title.nil? ? '<no title>' : nkgr.title
         rescue
@@ -52,7 +51,6 @@ class WebTitle
         end
         msg << " (重定向到 #{url} )" if redirected != 0
       end
-
     else
       #error
       msg = "⇪错误：#{response.status}"
