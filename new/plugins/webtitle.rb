@@ -64,6 +64,7 @@ class WebTitle
 
   def execute(m, query)
     return unless @@enabled
+    return unless $antiflood.log_check_and_ban m
     url = query
     s = get_url_info(url)
     m.reply(s) unless s.strip.empty?
