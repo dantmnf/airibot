@@ -28,6 +28,11 @@ class WebTitle
 
       if response.content_type.include? 'html'
         nkgr = Nokogiri.parse response.body
+        if enc = nkgr.meta_encoding
+          enc = 'GBK' if enc =~ /^GB2312/i
+ #         nkgr = Nokogiri::HTML(response.body.force_encoding(enc).encode('utf-8', undef: :replace, invalid: :replace, replace: "?"))
+          p enc
+        end
         title = begin
           nkgr.title.nil? ? '<no title>' : nkgr.title
         rescue

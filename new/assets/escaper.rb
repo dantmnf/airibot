@@ -13,10 +13,7 @@ if Process.euid == 0
 end
 
 [:fork,:exec,:load,:require,:require_relative,:spawn,:syscall,:system,:`,:sleep,:open].each {|symb| Kernel.send(:remove_method, symb)}
-[:Process,:Thread,:File,:FileTest].each {|symb| Object.send(:remove_const, symb)}
-class <<IO
-  undef popen
-end
+[:Process,:Thread,:File,:FileTest,:IO].each {|symb| Object.send(:remove_const, symb)}
 #FIXME: other dangerous methods
 begin
   result = eval(STDIN.read, nil, 'IRC Message', 1)
