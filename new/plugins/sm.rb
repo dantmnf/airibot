@@ -24,4 +24,12 @@ class SM
     return unless $antiflood.log_check_and_ban m
     m.reply(get_sm_message(query), true)
   end
+
+  match /LQYMGT([1-7])$/i, method: :lqymgt
+  def lqymgt(m, n)
+    n.to_i.times do
+      return unless $antiflood.log_check_and_ban m
+      m.reply(get_sm_message('LQYMGT'), true)
+    end
+  end
 end
