@@ -38,14 +38,15 @@ class HTMLParserPlugin
     argv.shift
     url, selector = argv
     content = Curl::Easy.perform(url) do |curl|
-      curl.header['User-Agent'] = options[:ua] if options[:ua]
+      curl.headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0'
+      curl.headers['User-Agent'] = options[:ua] if options[:ua]
     end.body_str
     document = Nokogiri.parse content
     case
     when options[:xpath]
       ele = document.at(selector)
     when options[:raw]
-      selector = '0' unless selector
+      selector = '0-320' unless selector
       l, r = selector.split('-', 2).map(&:to_i)
       if r < l or r-l > 320
         r=l+320
@@ -62,6 +63,7 @@ class HTMLParserPlugin
     end
 
   rescue
+    p $!
     stdout << '玩坏掉了。'
   end
 end
