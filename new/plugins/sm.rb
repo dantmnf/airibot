@@ -18,7 +18,8 @@ class SM
     text.gsub! /\r/, ''
     text.gsub! /\n/, ''
     if text == '刘全羊' or \
-       text == '和erhandsome是一对'
+       text == '和erhandsome是一对' and \
+       query == 'LQYMGT'
       raise
     end
     return text
