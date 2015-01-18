@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    bindata (2.1.0)
     cinch (2.1.0)
     crass (1.0.1)
     curb (0.8.6)
@@ -9,6 +10,8 @@ GEM
       mini_portile (= 0.6.0)
     nokogumbo (1.2.0)
       nokogiri
+    qqwry (0.0.3)
+      bindata
     sanitize (3.1.0)
       crass (~> 1.0.1)
       nokogiri (>= 1.4.4)
@@ -22,5 +25,6 @@ DEPENDENCIES
   cinch
   curb
   nokogiri
+  qqwry
   sanitize
   sqlite3

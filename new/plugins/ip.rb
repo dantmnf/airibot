@@ -6,6 +6,7 @@ require 'open-uri'
 require 'json'
 require 'ipaddr'
 require 'socket'
+require 'qqwry'
 class IPQuery
   include Cinch::Plugin
 
@@ -34,10 +35,25 @@ class IPQuery
     msg
   end
   
+  def qqwry(addr)
+    return 'not supported' if addr.ipv6?
+    db = QQWry::Database.new('qqwry.dat')
+    r = db.query addr.to_s
+    "#{r.country} #{r.area}"
+  end
   
   def execute(m, query)
     return unless $antiflood.log_check_and_ban m
-    msg = resolve(query.strip).map {|addr| [addr.to_s, ptr(addr), get_ip_info(addr)].join(' ') }.join("\n")
-    m.reply(msg, true)
+    msg = resolve(query.strip).each do |addr|
+      m.reply [addr.to_s, ptr(addr), get_ip_info(addr)].join(' '), true
+    end
+  end
+
+  match /(?-:qqwry|cz) (.+)/, method: :execute_qqwry
+  def execute_qqwry(m, query)
+    return unless $antiflood.log_check_and_ban m
+    msg = resolve(query.strip).each do |addr|
+      m.reply [addr.to_s, ptr(addr), qqwry(addr)].join(' '), true
+    end
   end
 end

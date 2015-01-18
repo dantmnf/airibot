@@ -5,3 +5,5 @@ gem 'sqlite3'
 gem 'curb'
 gem 'nokogiri'
 gem 'sanitize'
+gem 'qqwry'
+

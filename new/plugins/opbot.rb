@@ -13,7 +13,7 @@ class OpBot
     else
       nick = m.user.nick
     end
-    m.channel.voice nick
+    m.channel.voice nick unless m.channel.voiced? nick
   end
 
   match /devoice( .+)?/, method: :devoice
@@ -24,6 +24,6 @@ class OpBot
     else
       nick = m.user.nick
     end
-    m.channel.devoice nick
+    m.channel.devoice nick if m.channel.voiced? nick
   end
 end
