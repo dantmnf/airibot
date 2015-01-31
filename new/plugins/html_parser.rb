@@ -57,9 +57,9 @@ class HTMLParserPlugin
       ele = document.at_css(selector)
     end
     if options[:outer]
-      stdout << ele.to_html.tr("\n", ' ')
+      stdout << ele.to_html.tr("\n", ' ').split(' ').join(' ')
     else
-      stdout << Sanitize.fragment(ele.to_html).tr("\n", ' ')
+      stdout << Sanitize.fragment(ele.to_html).tr("\n", ' ').split(' ').join(' ')
     end
 
   rescue

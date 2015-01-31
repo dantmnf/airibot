@@ -29,6 +29,6 @@ class EvalRb
     if exit_status == 124
       result << 'error: killed by watchdog'
     end
-    m.reply result, true
+    m.reply result
   end
 end
