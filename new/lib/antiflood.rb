@@ -2,7 +2,7 @@ require 'bundler/setup'
 require 'cinch'
 
 class AntiFlood
-  LOG_SIZE = 8
+  LOG_SIZE = 6
   ANTIFLOOD_BURST_DURATION = 30
   BAN_TIME = 60
   def initialize
@@ -35,8 +35,8 @@ class AntiFlood
     userlog = @data[target][user]
 
     result = false
-    result = ((nicklog.length >= LOG_SIZE) && (nicklog.last - nicklog.first < ANTIFLOOD_BURST_DURATION))
-    result ||= ((userlog.length >= LOG_SIZE) && (userlog.last - userlog.first < ANTIFLOOD_BURST_DURATION))
+    result = ((nicklog.length > LOG_SIZE) && (nicklog.last - nicklog.first < ANTIFLOOD_BURST_DURATION))
+    result ||= ((userlog.length > LOG_SIZE) && (userlog.last - userlog.first < ANTIFLOOD_BURST_DURATION))
 
     return result
   end

@@ -11,7 +11,7 @@ class EvalRb
   def execute(m, query)
     return unless $antiflood.log_check_and_ban m
     # TODO: use Docker API
-    sin, sout, serr, thr = Open3.popen3("docker run -i --rm archmin-ruby220:fixed setuidgid 99:99 env -i LANG=en_US.UTF-8 timeout -t 2 /usr/bin/ruby --disable=gems /evalrb/escaper.rb")
+    sin, sout, serr, thr = Open3.popen3("docker run -i --rm archmin-ruby220:fixed3 setuidgid 12450:12450 env -i LANG=zh_CN.UTF-8 timeout -t 2 /usr/bin/ruby --disable=gems -E UTF-8:UTF-8 /evalrb/escaper.rb")
     pid = thr[:pid]
     sin.puts query
     sin.close
@@ -26,7 +26,7 @@ class EvalRb
     else
       result = error
     end
-    result = result.each_line.take(5).join
+    result = result[0..1024].each_line.take(5).join
     if exit_status == 124
       result << 'error: killed by watchdog'
     end
