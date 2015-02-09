@@ -56,14 +56,15 @@ class HTMLParserPlugin
     else
       ele = document.at_css(selector)
     end
+    p ele
+    
     if options[:outer]
       stdout << ele.to_html.tr("\n", ' ').split(' ').join(' ')
     else
       stdout << Sanitize.fragment(ele.to_html).tr("\n", ' ').split(' ').join(' ')
     end
 
-  rescue
-    p $!
-    stdout << '玩坏掉了。'
+  rescue => e
+    stdout << "error: " << e.class.name << ': ' << e.message
   end
 end
