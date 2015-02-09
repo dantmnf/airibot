@@ -11,7 +11,7 @@ class EvalRb
   def execute(m, query)
     return unless $antiflood.log_check_and_ban m
     # TODO: use Docker API
-    sin, sout, serr, thr = Open3.popen3("docker run -i --rm evalrb-sandbox setuidgid 12450:12450 env -i LANG=zh_CN.UTF-8 timeout -t 2 /usr/bin/ruby --disable=gems -E UTF-8:UTF-8 /evalrb/escaper.rb")
+    sin, sout, serr, thr = Open3.popen3("docker run -i --rm evalrb-sandbox busybox setuidgid 12450:12450 env -i LANG=zh_CN.UTF-8 busybox timeout -t 2 /usr/bin/ruby --disable=gems -E UTF-8:UTF-8 /evalrb/escaper.rb")
     pid = thr[:pid]
     sin.puts query
     sin.close
