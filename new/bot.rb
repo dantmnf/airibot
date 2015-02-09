@@ -13,6 +13,7 @@ require_relative 'plugins/bf'
 require_relative 'plugins/ip'
 require_relative 'plugins/html_parser'
 require_relative 'plugins/opbot'
+require_relative 'plugins/evaljs'
 
 CFGFILE = 'config.rb'
 
@@ -32,7 +33,7 @@ p $!
       c.channels = ["#linuxba"]
       c.plugins.prefix = /^-/
     end
-    c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb, BFPlugin, IPQuery, HTMLParserPlugin, OpBot]
+    c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb, BFPlugin, IPQuery, HTMLParserPlugin, OpBot, EvalJS]
   end
   #loggers.level = :log
 

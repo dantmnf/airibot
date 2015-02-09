@@ -6,4 +6,5 @@ gem 'curb'
 gem 'nokogiri'
 gem 'sanitize'
 gem 'qqwry'
+gem 'therubyracer'
 
