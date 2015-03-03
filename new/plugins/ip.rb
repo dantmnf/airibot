@@ -28,7 +28,7 @@ class IPQuery
     hsh = JSON response
     p hsh 
     if hsh['code'] == 0
-      msg = hsh['data'].values_at(*%w(country area region city county isp)).join(' ')
+      msg = hsh['data'].values_at(*%w(country region city county isp)).reject{|s| s.strip.empty? }.join(' ')
     else
       msg = hsh['data']
     end

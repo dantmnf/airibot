@@ -33,9 +33,9 @@ class SM
     m.reply(get_sm_message(query), true)
   end
 
-  match /LQYMGT([1-7])$/i, method: :lqymgt
+  match /LQYMGT([1-7A-F])$/i, method: :lqymgt
   def lqymgt(m, n)
-    n.to_i.times do
+    n.to_i(16).times do
       return unless $antiflood.log_check_and_ban m
       m.reply(get_sm_message('LQYMGT'), true)
     end
