@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 class BrainFuck
+  UnbalanceedBracketsError = Class.new(RuntimeError)
   def initialize
     @ops = create_ops
     @tape = Array.new(1024,0)
@@ -11,11 +12,20 @@ class BrainFuck
   end
 
   def compile c
+    brackets = 0
     c.split("").each do |o|
-      if @ops.has_key? o
+      case o
+      when '['
+        brackets += 1
+        @code << o
+      when ']'
+        brackets -= 1
+        @code << o
+      when @ops.method(:has_key?)
         @code << o
       end
     end
+    raise UnbalanceedBracketsError if brackets != 0
     return self
   end
 

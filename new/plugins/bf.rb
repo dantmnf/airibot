@@ -18,5 +18,7 @@ class BFPlugin
       result = result[0..137] + '...'
     end
     m.reply(result.empty? ? 'no output' : result, true)
+  rescue
+    m.reply $!.to_s, true
   end
 end
