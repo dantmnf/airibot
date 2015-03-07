@@ -4,7 +4,7 @@ class BrainFuck
   UnbalanceedBracketsError = Class.new(RuntimeError)
   def initialize
     @ops = create_ops
-    @tape = Array.new(1024,0)
+    @tape = Hash.new(0)
     @tp = 0
     @code = []
     @cp = 0
