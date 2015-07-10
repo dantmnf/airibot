@@ -14,8 +14,8 @@ module Cinch
     end
     def start
       @tgbot.get_updates(fail_sliently: true) do |message|
-        if message.chat.id == -14381522
-          @bot.synchronize(:tgsync) { Target.new('##Orz', @bot).msg("[#{message.user.first_name} #{message.user.last_name}] #{message.text}") }
+        if ::TGSYNC_GROUPS.value? message.chat.id
+            @bot.synchronize(:tgsync) { Target.new(::TGSYNC_GROUPS.invert[message.chat.id], @bot).msg("[#{message.user.first_name} #{message.user.last_name}] #{message.text}") }
         end
       end
     end

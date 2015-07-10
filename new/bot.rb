@@ -25,15 +25,19 @@ bot = Cinch::Bot.new do
     begin
       eval File.read(CFGFILE) # example contents in this file is in rescue...end below
     rescue
-p $!
-      c.nick = 'Airi_new'
-      c.user = 'Airi'
-      c.realname = '新しいアイリ'
-      c.server = "chat.freenode.net"
-      c.port = 6697
-      c.ssl.use = true
-      c.channels = ["##Orz"]
-      c.plugins.prefix = /^-/
+        c.nick = 'Airi_new'
+        c.user = 'Airi'
+        c.realname = 'the new Airi'
+        c.server = "chat.freenode.net"
+        c.port = 6697
+        c.ssl.use = true
+        c.channels = ["##Airi-test"]
+        c.plugins.prefix = /^-/
+        #::TELEGRAM_TOKEN='xxxxxxxx:xxxxxxxxxxxxxxxxxxxxxxxxxxx__xxxxxx'
+        #::TGSYNC_GROUPS = {'##channel' => -1234567}
+        
+        #c.sasl.username = ''
+        #c.sasl.password = ''
     end
     c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb, BFPlugin, IPQuery, HTMLParserPlugin, OpBot, EvalJS, TelegramSyncPlugin]
   end
@@ -51,7 +55,7 @@ Thread.new do
   Cinch::Console.new(bot).attach
 end
 Thread.new do
-    $tgsync = Cinch::TelegramSync.new(bot, TELEGRAM_TOKEN)
+    $tgsync = Cinch::TelegramSync.new(bot, ::TELEGRAM_TOKEN)
     $tgsync.start
 end
 bot.start
