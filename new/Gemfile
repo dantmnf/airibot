@@ -8,3 +8,5 @@ gem 'sanitize'
 gem 'qqwry'
 gem 'therubyracer'
 
+gem 'telegram_bot'
+

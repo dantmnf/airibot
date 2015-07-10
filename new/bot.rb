@@ -4,6 +4,7 @@ require 'cinch'
 
 require_relative 'lib/console'
 require_relative 'lib/antiflood'
+require_relative 'lib/telegram'
 require_relative 'plugins/sm'
 require_relative 'plugins/pia'
 require_relative 'plugins/rollbed'
@@ -14,6 +15,8 @@ require_relative 'plugins/ip'
 require_relative 'plugins/html_parser'
 require_relative 'plugins/opbot'
 require_relative 'plugins/evaljs'
+
+require_relative 'plugins/tgsync'
 
 CFGFILE = 'config.rb'
 
@@ -30,10 +33,10 @@ p $!
       c.server = "chat.freenode.net"
       c.port = 6697
       c.ssl.use = true
-      c.channels = ["#linuxba"]
+      c.channels = ["##Orz"]
       c.plugins.prefix = /^-/
     end
-    c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb, BFPlugin, IPQuery, HTMLParserPlugin, OpBot, EvalJS]
+    c.plugins.plugins = [TelegramSyncPlugin]
   end
   #loggers.level = :log
 
@@ -48,5 +51,11 @@ end
 Thread.new do
   Cinch::Console.new(bot).attach
 end
-
+Thread.new do
+    p 'starting tgsync'
+    $tgsync = Cinch::TelegramSync.new(bot, TELEGRAM_TOKEN)
+    #bot.instance_variable_set '@tgbot', tgbot
+    p 'invoking tgsync.start'
+    $tgsync.start
+end
 bot.start
