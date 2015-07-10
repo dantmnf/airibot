@@ -15,7 +15,6 @@ require_relative 'plugins/ip'
 require_relative 'plugins/html_parser'
 require_relative 'plugins/opbot'
 require_relative 'plugins/evaljs'
-
 require_relative 'plugins/tgsync'
 
 CFGFILE = 'config.rb'
@@ -36,7 +35,7 @@ p $!
       c.channels = ["##Orz"]
       c.plugins.prefix = /^-/
     end
-    c.plugins.plugins = [TelegramSyncPlugin]
+    c.plugins.plugins = [SM, Pia, WebTitle, Rollbed, EvalRb, BFPlugin, IPQuery, HTMLParserPlugin, OpBot, EvalJS, TelegramSyncPlugin]
   end
   #loggers.level = :log
 
