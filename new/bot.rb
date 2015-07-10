@@ -52,10 +52,7 @@ Thread.new do
   Cinch::Console.new(bot).attach
 end
 Thread.new do
-    p 'starting tgsync'
     $tgsync = Cinch::TelegramSync.new(bot, TELEGRAM_TOKEN)
-    #bot.instance_variable_set '@tgbot', tgbot
-    p 'invoking tgsync.start'
     $tgsync.start
 end
 bot.start
