@@ -43,19 +43,16 @@ bot = Cinch::Bot.new do
   end
   #loggers.level = :log
 
-#  on :ctcp do |m|
-#    if m.ctcp_message.upcase == 'VERSION'
-#      m.ctcp_reply 'VERSION Airi_new by dantmnf'
-#    end
-#  end
+  on :connect do
+    Thread.new do
+      $tgsync = Cinch::TelegramSync.new(bot, ::TELEGRAM_TOKEN)
+      $tgsync.start
+    end
+  end
 
 end
 
 Thread.new do
   Cinch::Console.new(bot).attach
-end
-Thread.new do
-    $tgsync = Cinch::TelegramSync.new(bot, ::TELEGRAM_TOKEN)
-    $tgsync.start
 end
 bot.start
