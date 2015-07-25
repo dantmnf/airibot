@@ -21,8 +21,13 @@ If you don't have it, you can also [use the Arch Linux bootstrap image](https://
     # sed -i 's/SigLevel *=.*$/SigLevel = Never/g' archbootstrap/root.x86_64/etc/pacman.conf # disable signature checking
     # archbootstrap/root.x86_64/usr/bin/arch-chroot archbootstrap/root.x86_64
       (in chroot)
-    # pacman -Syu  --noconfirm ruby
+    # pacman -Syu  --noconfirm ruby busybox
     # pacman -Rcsn --noconfirm systemd pacman
+    # cd /bin
+    # for command in $(busybox --list)
+    > do
+    >   [ ! -e $command ] && busybox ln -s busybox $command
+    > done
       (you can remove some files)
     # rm -rf /usr/share/{doc,man}/* /usr/include/* /var/cache/* /lib/*/*.a
     # exit # exit chroot
